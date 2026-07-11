@@ -19,6 +19,7 @@ import {
   promptTemplateCategories,
 } from "@/components/home/prompt-templates";
 
+import { useCreateProject } from "@/features/projects/hooks/projects";
 /**
  * Main prompt composer on the home page.
  *
@@ -29,10 +30,17 @@ import {
 export function PromptInput() {
   const [prompt, setPrompt] = useState("");
   const router = useRouter();
- const isPending = false;
+  const { mutate: createProject, isPending } = useCreateProject();
 
   function handleSubmit() {
-   
+    createProject(prompt,{ 
+      onSuccess: (project) => {
+        router.push(`/projects/${project.id}`);
+      },
+      onError: (error) => {
+        toast.error(`Failed to create project: ${error.message}`);
+      } 
+    });
   }
 
   /**
